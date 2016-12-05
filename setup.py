@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 from pywpasupplicant import __version__
 
 from setuptools.command.install import install
@@ -13,15 +13,17 @@ class Build_ext_first(install):
 
 
 wpa_ctrl_iface_ext = Extension(
-    name="pywpasupplicant._wpa_ctrl",
+    name="_wpa_ctrl",
     sources=[
         "pywpasupplicant/wpa_ctrl.c",
         "pywpasupplicant/wpa_ctrl.i",
     ],
     depends=[
         "pywpasupplicant/wpa_ctrl.h",
+        "setup.py",
     ],
     define_macros=[
+        ("CONFIG_CTRL_IFACE", None),
         ("CONFIG_CTRL_INTERFACE", None),
         ("CONFIG_CTRL_IFACE_UNIX", None),
     ],

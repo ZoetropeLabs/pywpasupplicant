@@ -10,6 +10,15 @@
  * See README for more details.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/un.h>
+
 //#include "includes.h"
 
 #ifdef CONFIG_CTRL_IFACE

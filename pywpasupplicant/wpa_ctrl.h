@@ -9,8 +9,6 @@
 #ifndef WPA_CTRL_H
 #define WPA_CTRL_H
 
-#include <sys/un.h>
-
 #ifdef  __cplusplus
 extern "C" {
 #endif
