@@ -7,8 +7,11 @@ from pywpasupplicant import __version__
 wpa_ctrl_iface_ext = Extension(
     name="_wpasupplicantc",
     sources=[
-        "wpa_ctrl.c",
-        "wpasupplicantc.c",
+        "pywpasupplicant/iface/wpa_ctrl.c",
+    ],
+    extra_compile_args=[
+        "-D CONFIG_CTRL_INTERFACE",
+        "-D CONFIG_CTRL_IFACE_UNIX",
     ],
 )
 
