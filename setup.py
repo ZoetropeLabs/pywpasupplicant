@@ -42,7 +42,10 @@ setup(
     description="Python interface to wpa supplicant",
     use_2to3=True,
     ext_modules=EXT,
-    packages=["pywpasupplicant"],
-    py_modules=["wpa_ctrl"],
+    packages=find_packages(exclude=["tests"]),
+    py_modules=["pywpasupplicant.wpa_ctrl"],
     cmdclass = {'install' : Build_ext_first},
+    test_suite="tests",
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
 )
