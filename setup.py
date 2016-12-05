@@ -20,10 +20,10 @@ wpa_ctrl_iface_ext = Extension(
     ],
     depends=[
         "pywpasupplicant/wpa_ctrl.h",
-    ]
+    ],
     define_macros=[
-        (CONFIG_CTRL_INTERFACE, None),
-        (CONFIG_CTRL_IFACE_UNIX, None),
+        ("CONFIG_CTRL_INTERFACE", None),
+        ("CONFIG_CTRL_IFACE_UNIX", None),
     ],
 )
 
