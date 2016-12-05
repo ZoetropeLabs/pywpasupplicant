@@ -5,7 +5,7 @@ from pywpasupplicant import __version__
 
 
 wpa_ctrl_iface_ext = Extension(
-    name="_wpactrlc",
+    name="_wpasupplicantc",
     sources=[
         "wpa_ctrl.c",
         "wpasupplicantc.c",
