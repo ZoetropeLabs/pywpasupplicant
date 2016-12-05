@@ -5,9 +5,10 @@ from pywpasupplicant import __version__
 
 
 wpa_ctrl_iface_ext = Extension(
-    name="_wpasupplicantc",
+    name="_wpa_ctrl",
     sources=[
         "pywpasupplicant/iface/wpa_ctrl.c",
+        "pywpasupplicant/iface/wpa_ctrl.i",
     ],
     extra_compile_args=[
         "-D CONFIG_CTRL_INTERFACE",
