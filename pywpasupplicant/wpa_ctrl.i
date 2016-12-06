@@ -64,11 +64,11 @@ char reply_buf[2048];
 
         if (rc == -1)
         {
-            return PyErr_Format(PyExc_RuntimeError, "Error with request '%s'", request);
+            return (char *) PyErr_Format(PyExc_RuntimeError, "Error with request '%s'", request);
         }
         else if (rc == -2)
         {
-            return PyErr_Format(PyExc_RuntimeError, "Timeout with request '%s'", request);
+            return (char *) PyErr_Format(PyExc_RuntimeError, "Timeout with request '%s'", request);
         }
         else
         {
