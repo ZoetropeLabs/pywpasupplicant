@@ -11,7 +11,8 @@
 
 %inline %{
 typedef struct {
-    struct wpa_ctrl ctrl_iface;
+    struct wpa_ctrl * ctrl_iface;
+    int attached;
 } DirectWPAInterface;
 
 char reply_buf[2048];
@@ -20,6 +21,8 @@ static int rc;
 %}
 
 %exception DirectWPAInterface::DirectWPAInterface {
+    rc = 0;
+
     $action
 
     if (rc == -1)
@@ -33,6 +36,8 @@ static int rc;
 }
 
 %exception DirectWPAInterface::ctrl_request {
+    rc = 0;
+
     $action
 
     if (rc == -1)
@@ -46,25 +51,63 @@ static int rc;
 }
 
 %extend DirectWPAInterface {
-    DirectWPAInterface(){
-        DirectWPAInterface * iface = calloc(1, sizeof(DirectWPAInterface));
-        rc = wpa_ctrl_attach(&(iface->ctrl_iface));
+    DirectWPAInterface(char * ctrl_path)
+    {
+        DirectWPAInterface * iface = NULL;
 
-        fprintf(stderr, "%d\n", rc);
-        fprintf(stderr, "%d\n", rc == -1);
+        struct wpa_ctrl * ctrl = wpa_ctrl_open(ctrl_path);
+
+        if (NULL == iface)
+        {
+            rc = -1;
+        }
+        else
+        {
+            iface = calloc(1, sizeof(DirectWPAInterface));
+            iface->ctrl_iface = ctrl;
+            iface->attached = 0;
+        }
 
         return iface;
     }
 
-    ~DirectWPAInterface(){
+    ~DirectWPAInterface()
+    {
         free($self);
+
+        if ($self->attached)
+        {
+            rc = wpa_ctrl_detach($self->ctrl_iface);
+        }
+
+        wpa_ctrl_close($self->ctrl_iface);
     }
 
-    char * ctrl_request(char* request)
+    void ctrl_attach()
+    {
+        rc = wpa_ctrl_attach($self->ctrl_iface);
+
+        if (rc == 0)
+        {
+            $self->attached = 1;
+        }
+    }
+
+    void ctrl_detach()
+    {
+        rc = wpa_ctrl_detach($self->ctrl_iface);
+
+        if (rc == 0 && $self->attached)
+        {
+            $self->attached = 0;
+        }
+    }
+
+    char * ctrl_request(char * request)
     {
         size_t reply_len;
 
-        rc = wpa_ctrl_request(&($self->ctrl_iface),
+        rc = wpa_ctrl_request($self->ctrl_iface,
             request,
             strlen(request),
             reply_buf,
