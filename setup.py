@@ -23,6 +23,9 @@ wpa_ctrl_iface_ext = Extension(
     libraries=[
         "wpactrl",
     ],
+    swig_opts=[
+        "-modern",
+    ],
 )
 
 EXT = [
