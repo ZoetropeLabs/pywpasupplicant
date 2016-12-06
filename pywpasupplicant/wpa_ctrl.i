@@ -2,6 +2,8 @@
 
 %module wpa_ctrl
 
+%include "exception.i"
+
 %{
 #define SWIG_FILE_WITH_INIT
 #include "wpa_ctrl.h"
@@ -13,38 +15,45 @@ typedef struct {
 } WPAInterface;
 
 char reply_buf[2048];
+
+static int rc;
 %}
 
-%extend WPAInterface {
-    /*
-     * Typemap needs to be declared inside this block because (???)
-     */
-    %typemap(in) unsigned char* {
-      if (!PyByteArray_Check($input)) {
-        SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "', argument "
-                           "$argnum"" of type '" "$type""'");
-      }
-      $1 = (unsigned char*) PyByteArray_AsString($input);
+%exception WPAInterface::WPAInterface {
+    $action
+
+    if (rc == -1)
+    {
+        SWIG_exception_fail(SWIG_RuntimeError, "Error -1 attaching to control interface");
     }
+    else if (rc == -2)
+    {
+        SWIG_exception_fail(SWIG_RuntimeError, "Error -2 attaching to control interface");
+    }
+}
 
+%exception WPAInterface::ctrl_request {
+    $action
+
+    if (rc == -1)
+    {
+        SWIG_exception_fail(SWIG_RuntimeError, "Error -1 making request");
+    }
+    else if (rc == -2)
+    {
+        SWIG_exception_fail(SWIG_RuntimeError, "Error -2 making request");
+    }
+}
+
+%extend WPAInterface {
     WPAInterface(){
-        WPAInterface * iface = malloc(sizeof(WPAInterface));
-        int rc = wpa_ctrl_attach(&(iface->ctrl_iface));
+        WPAInterface * iface = calloc(1, sizeof(WPAInterface));
+        rc = wpa_ctrl_attach(&(iface->ctrl_iface));
 
-        if (rc == -1)
-        {
-            PyErr_SetString(PyExc_RuntimeError, "Error creating wpa_ctrl interface");
-            return NULL;
-        }
-        else if (rc == -2)
-        {
-            PyErr_SetString(PyExc_RuntimeError, "Timeout creating wpa_ctrl interface");
-            return NULL;
-        }
-        else
-        {
-            return iface;
-        }
+        fprintf(stderr, "%d\n", rc);
+        fprintf(stderr, "%d\n", rc == -1);
+
+        return iface;
     }
 
     ~WPAInterface(){
@@ -55,24 +64,13 @@ char reply_buf[2048];
     {
         size_t reply_len;
 
-        int rc = wpa_ctrl_request(&($self->ctrl_iface),
+        rc = wpa_ctrl_request(&($self->ctrl_iface),
             request,
             strlen(request),
             reply_buf,
             &reply_len,
             NULL);
 
-        if (rc == -1)
-        {
-            return (char *) PyErr_Format(PyExc_RuntimeError, "Error with request '%s'", request);
-        }
-        else if (rc == -2)
-        {
-            return (char *) PyErr_Format(PyExc_RuntimeError, "Timeout with request '%s'", request);
-        }
-        else
-        {
-            return reply_buf;
-        }
+        return reply_buf;
     }
 }
