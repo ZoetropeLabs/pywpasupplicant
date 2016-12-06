@@ -32,6 +32,10 @@ EXT = [
     wpa_ctrl_iface_ext,
 ]
 
+REQUIREMENTS = [
+    "passlib==1.7.0",
+]
+
 setup(
     name="pywpasupplicant",
     version=__version__,
@@ -47,4 +51,5 @@ setup(
     test_suite="tests",
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
+    install_requires=REQUIREMENTS,
 )
