@@ -1,7 +1,7 @@
-from pywpasupplicant.wpa_ctrl import WPAInterface
+from pywpasupplicant.wpa_ctrl import DirectWPAInterface
 
 
 def test_interface():
-    iface = WPAInterface()
+    iface = DirectWPAInterface()
 
     iface.ctrl_request("SCAN")

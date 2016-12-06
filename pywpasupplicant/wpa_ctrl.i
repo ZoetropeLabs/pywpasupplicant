@@ -12,14 +12,14 @@
 %inline %{
 typedef struct {
     struct wpa_ctrl ctrl_iface;
-} WPAInterface;
+} DirectWPAInterface;
 
 char reply_buf[2048];
 
 static int rc;
 %}
 
-%exception WPAInterface::WPAInterface {
+%exception DirectWPAInterface::DirectWPAInterface {
     $action
 
     if (rc == -1)
@@ -32,7 +32,7 @@ static int rc;
     }
 }
 
-%exception WPAInterface::ctrl_request {
+%exception DirectWPAInterface::ctrl_request {
     $action
 
     if (rc == -1)
@@ -45,9 +45,9 @@ static int rc;
     }
 }
 
-%extend WPAInterface {
-    WPAInterface(){
-        WPAInterface * iface = calloc(1, sizeof(WPAInterface));
+%extend DirectWPAInterface {
+    DirectWPAInterface(){
+        DirectWPAInterface * iface = calloc(1, sizeof(DirectWPAInterface));
         rc = wpa_ctrl_attach(&(iface->ctrl_iface));
 
         fprintf(stderr, "%d\n", rc);
@@ -56,7 +56,7 @@ static int rc;
         return iface;
     }
 
-    ~WPAInterface(){
+    ~DirectWPAInterface(){
         free($self);
     }
 
