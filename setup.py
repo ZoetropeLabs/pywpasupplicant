@@ -15,17 +15,13 @@ class Build_ext_first(install):
 wpa_ctrl_iface_ext = Extension(
     name="_wpa_ctrl",
     sources=[
-        "pywpasupplicant/wpa_ctrl.c",
         "pywpasupplicant/wpa_ctrl.i",
     ],
     depends=[
-        "pywpasupplicant/wpa_ctrl.h",
         "setup.py",
     ],
-    define_macros=[
-        ("CONFIG_CTRL_IFACE", None),
-        ("CONFIG_CTRL_INTERFACE", None),
-        ("CONFIG_CTRL_IFACE_UNIX", None),
+    libraries=[
+        "wpactrl",
     ],
 )
 
